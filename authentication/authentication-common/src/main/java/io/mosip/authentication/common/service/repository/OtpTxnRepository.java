@@ -1,5 +1,6 @@
 package io.mosip.authentication.common.service.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.mosip.authentication.common.service.entity.OtpTransaction;
@@ -20,5 +21,6 @@ public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String>
 	 * @return the optional
 	 */
 	Optional<OtpTransaction> findByOtpHashAndStatusCode(String otpHash, String statusCode);
+	Optional<OtpTransaction> findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(String refIdHash, List<String> statusCodes);
 	
 }

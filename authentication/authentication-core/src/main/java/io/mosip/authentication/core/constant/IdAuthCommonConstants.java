@@ -10,6 +10,8 @@ public final class IdAuthCommonConstants {
 
 	public static final String DEVICE_PURPOSE_AUTH = "AUTH";
 
+	public static final String FROZEN = "frozen";
+
 	public static final String DIGITAL_ID_PREFIX = "digitalId/";
 
 	public static final String DEVICE_PROVIDER_ID = "deviceProviderId";
@@ -90,6 +92,8 @@ public final class IdAuthCommonConstants {
 
 	/** The Constant KER_PUBLIC_KEY_EXPIRED. */
 	public static final String KER_PUBLIC_KEY_EXPIRED = "KER-KMS-003";
+
+	public static final String UNFROZEN = "unfrozen";
 
 	/** The Constant KER_DECRYPTION_FAILURE. */
 	public static final String KER_DECRYPTION_FAILURE = "KER-FSE-003";
