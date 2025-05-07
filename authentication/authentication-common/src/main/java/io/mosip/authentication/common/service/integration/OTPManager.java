@@ -268,9 +268,8 @@ public class OTPManager {
 		} else {
 			return false;
 		}*/
-		//String refIdHash = securityManager.hash(individualId);
-		logger.info("individualId",individualId);
-		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc("D37A7F83108EF7B586B54255D881021B0CD51451FE00835B6C95BD44D77DE182", QUERIED_STATUS_CODES);
+		String refIdHash = securityManager.hash(individualId);
+		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(refIdHash, QUERIED_STATUS_CODES);
 
 		if (otpEntityOpt.isEmpty()) {
 			throw new IdAuthenticationBusinessException(IdAuthenticationErrorConstants.OTP_REQUEST_REQUIRED);
