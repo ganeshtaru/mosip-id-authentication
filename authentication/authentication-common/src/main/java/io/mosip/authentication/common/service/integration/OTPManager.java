@@ -110,6 +110,20 @@ public class OTPManager {
 	public boolean sendOtp(OtpRequestDTO otpRequestDTO, String idvid, String idvidType, Map<String, String> valueMap)
 			throws IdAuthenticationBusinessException {
 
+		String refId = securityManager.hash(otpRequestDTO.getIndividualId());
+		Optional<OtpTransaction> otpEntityOpt = otpRepo
+				.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(
+						refId, IdAuthCommonConstants.ACTIVE_STATUS);
+		// If OTP exists and is not expired, return early
+		if (otpEntityOpt.isPresent()) {
+			OtpTransaction existingOtpTxn = otpEntityOpt.get();
+			if (existingOtpTxn.getExpiryDtimes() != null &&
+					existingOtpTxn.getExpiryDtimes().isAfter(DateUtils.getUTCCurrentDateTime())) {
+				logger.info("Valid OTP already exists for individualId: {}", otpRequestDTO.getIndividualId());
+				return false;
+			}
+		}
+
 		Map<String, Object> otpTemplateValues = getOtpTemplateValues(otpRequestDTO, idvid, idvidType, valueMap);
 		String otp = generateOTP(otpRequestDTO.getIndividualId());
 		otpTemplateValues.put("otp", otp);
@@ -320,9 +334,9 @@ public class OTPManager {
 			otpEntity.setStatusCode(IdAuthCommonConstants.UNFROZEN);
 			if(saveEntity) {
 				otpRepo.save(otpEntity);
-			}
 		}
 	}
+}
 	private String getOtpHash(String pinValue, String otpKey) {
 		return IdAuthSecurityManager.digestAsPlainText(
 				(otpKey + EnvUtil.getKeySplitter() + pinValue).getBytes());
