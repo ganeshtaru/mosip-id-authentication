@@ -283,7 +283,9 @@ public class OTPManager {
 		} else {
 			return false;
 		}*/
+		logger.info("individualId: {}", individualId);
 		String refIdHash = securityManager.hash(individualId);
+		logger.info("refIdHash: {}", refIdHash);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(refIdHash, QUERIED_STATUS_CODES);
 
 		if (otpEntityOpt.isEmpty()) {
@@ -300,8 +302,10 @@ public class OTPManager {
 		// At this point it should be active status alone.
 		// Increment the validation attempt count.
 		int attemptCount = otpEntity.getValidationRetryCount() == null ? 1 : otpEntity.getValidationRetryCount() + 1;
-
+		logger.info("pinValue: {}", pinValue);
+		logger.info("otpKey: {}", otpKey);
 		String otpHash = getOtpHash(pinValue, otpKey);
+		logger.info("otpHash: {}", otpHash);
 		if (otpEntity.getOtpHash().equals(otpHash)) {
 			otpEntity.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
 			otpEntity.setStatusCode(IdAuthCommonConstants.USED_STATUS);
