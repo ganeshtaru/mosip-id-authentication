@@ -22,6 +22,7 @@ public enum OtpMatchingStrategy implements TextMatchingStrategy {
 
 	EXACT(MatchingStrategyType.EXACT, (Object reqInfo, Object entityInfo, Map<String, Object> props) -> {
 		Object idvidObj = props.get(IdAuthCommonConstants.IDVID);
+		System.out.println("OtpMatchingStrategy in idvidObj: " + idvidObj);
 		if (reqInfo instanceof String && entityInfo instanceof String) {
 			Object object = props.get(ValidateOtpFunction.class.getSimpleName());
 			if (object instanceof ValidateOtpFunction) {
