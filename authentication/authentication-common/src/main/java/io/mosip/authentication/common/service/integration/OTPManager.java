@@ -109,11 +109,12 @@ public class OTPManager {
 	 */
 	public boolean sendOtp(OtpRequestDTO otpRequestDTO, String idvid, String idvidType, Map<String, String> valueMap)
 			throws IdAuthenticationBusinessException {
-
+		logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
 		String refId = securityManager.hash(otpRequestDTO.getIndividualId());
+		logger.info("refId: {}", refId);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo
 				.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(
-						refId, IdAuthCommonConstants.ACTIVE_STATUS);
+						refId, QUERIED_STATUS_CODES);
 		// If OTP exists and is not expired, return early
 		if (otpEntityOpt.isPresent()) {
 			OtpTransaction existingOtpTxn = otpEntityOpt.get();

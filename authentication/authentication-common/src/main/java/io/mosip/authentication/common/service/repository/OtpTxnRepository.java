@@ -21,7 +21,7 @@ public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String>
 	 * @return the optional
 	 */
 	Optional<OtpTransaction> findByOtpHashAndStatusCode(String otpHash, String statusCode);
-	Optional<OtpTransaction> findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(String refIdHash, List<String> statusCodes);
-	Optional<OtpTransaction> findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(String refId, String statusCode);
+	//Optional<OtpTransaction> findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(String refIdHash, List<String> statusCodes);
+	Optional<OtpTransaction> findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(String refId, List<String> statusCodes);
 
 }
