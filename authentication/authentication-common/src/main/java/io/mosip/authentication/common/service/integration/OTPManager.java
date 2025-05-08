@@ -91,7 +91,7 @@ public class OTPManager {
 	@Value("${mosip.ida.otp.frozen.duration.minutes:30}")
 	private int otpFrozenTimeMinutes;
 
-	private static final List<String> QUERIED_STATUS_CODES = List.of(IdAuthCommonConstants.ACTIVE_STATUS, IdAuthCommonConstants.FROZEN);
+	private static final List<String> QUERIED_STATUS_CODES = List.of(IdAuthCommonConstants.ACTIVE_STATUS);
 
 	/** The logger. */
 	private static Logger logger = IdaLogger.getLogger(OTPManager.class);
@@ -109,7 +109,7 @@ public class OTPManager {
 	 */
 	public boolean sendOtp(OtpRequestDTO otpRequestDTO, String idvid, String idvidType, Map<String, String> valueMap)
 			throws IdAuthenticationBusinessException {
-		logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
+		/*logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
 		String refId = securityManager.hash(otpRequestDTO.getIndividualId());
 		logger.info("refId: {}", refId);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo
@@ -123,7 +123,7 @@ public class OTPManager {
 				logger.info("Valid OTP already exists for individualId: {}", otpRequestDTO.getIndividualId());
 				return false;
 			}
-		}
+		}*/
 
 		Map<String, Object> otpTemplateValues = getOtpTemplateValues(otpRequestDTO, idvid, idvidType, valueMap);
 		String otp = generateOTP(otpRequestDTO.getIndividualId());
@@ -287,7 +287,12 @@ public class OTPManager {
 		String refIdHash = securityManager.hash(individualId);
 		logger.info("refIdHash: {}", refIdHash);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(refIdHash, QUERIED_STATUS_CODES);
-
+		if (otpEntityOpt.isPresent()) {
+			OtpTransaction otpEntity = otpEntityOpt.get();
+			System.out.println("OtpTransaction: " + otpEntity); // Calls otpEntity.toString()
+		} else {
+			System.out.println("No OtpTransaction found for refIdHash: " + refIdHash);
+		}
 		if (otpEntityOpt.isEmpty()) {
 			throw new IdAuthenticationBusinessException(IdAuthenticationErrorConstants.OTP_REQUEST_REQUIRED);
 		}

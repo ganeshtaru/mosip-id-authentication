@@ -36,7 +36,7 @@ public enum PinMatchType implements MatchType {
 	}),
 	OTP(IdaIdMapping.OTP, Category.OTP, setOf(OtpMatchingStrategy.EXACT), 
 		authReqDTO -> {
-			System.out.println("Print match trype Individual id"+authReqDTO.getIndividualId());
+			System.out.println("Print match trype Individual id: "+authReqDTO.getIndividualId());
 			String tOtp = authReqDTO.getRequest().getOtp();
 			return Objects.nonNull(tOtp)? tOtp : "";
 		});
