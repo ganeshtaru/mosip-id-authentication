@@ -109,12 +109,11 @@ public class OTPManager {
 	 */
 	public boolean sendOtp(OtpRequestDTO otpRequestDTO, String idvid, String idvidType, Map<String, String> valueMap)
 			throws IdAuthenticationBusinessException {
-		/*logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
+		logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
 		String refId = securityManager.hash(otpRequestDTO.getIndividualId());
 		logger.info("refId: {}", refId);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo
-				.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(
-						refId, QUERIED_STATUS_CODES);
+				.findFirstByRefIdAndStatusCodeInAndCrDtimesNotNullOrderByCrDtimesDesc(refId, IdAuthCommonConstants.ACTIVE_STATUS);
 		// If OTP exists and is not expired, return early
 		if (otpEntityOpt.isPresent()) {
 			OtpTransaction existingOtpTxn = otpEntityOpt.get();
@@ -123,7 +122,7 @@ public class OTPManager {
 				logger.info("Valid OTP already exists for individualId: {}", otpRequestDTO.getIndividualId());
 				return false;
 			}
-		}*/
+		}
 
 		Map<String, Object> otpTemplateValues = getOtpTemplateValues(otpRequestDTO, idvid, idvidType, valueMap);
 		String otp = generateOTP(otpRequestDTO.getIndividualId());
@@ -264,7 +263,7 @@ public class OTPManager {
 	 *                                           exception
 	 */
 	public boolean validateOtp(String pinValue, String otpKey, String individualId) throws IdAuthenticationBusinessException {
-		/*String otpHash;
+		String otpHash;
 		otpHash = IdAuthSecurityManager.digestAsPlainText(
 				(otpKey + environment.getProperty(IdAuthConfigKeyConstants.KEY_SPLITTER) + pinValue).getBytes());
 		Optional<OtpTransaction> otpTxnOpt = otpRepo.findByOtpHashAndStatusCode(otpHash, IdAuthCommonConstants.ACTIVE_STATUS);
@@ -282,8 +281,8 @@ public class OTPManager {
 			}
 		} else {
 			return false;
-		}*/
-		logger.info("individualId: {}", individualId);
+		}
+		/*logger.info("individualId: {}", individualId);
 		String refIdHash = securityManager.hash(individualId);
 		logger.info("refIdHash: {}", refIdHash);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndCrDtimesNotNullOrderByCrDtimesDesc(refIdHash,IdAuthCommonConstants.ACTIVE_STATUS);
@@ -298,11 +297,11 @@ public class OTPManager {
 		}
 
 		OtpTransaction otpEntity = otpEntityOpt.get();
-		requireOtpNotFrozen(otpEntity, true);
+		//requireOtpNotFrozen(otpEntity, true);
 
-		if(otpEntity.getStatusCode().equals(IdAuthCommonConstants.UNFROZEN)) {
+		*//*if(otpEntity.getStatusCode().equals(IdAuthCommonConstants.UNFROZEN)) {
 			throw new IdAuthenticationBusinessException(IdAuthenticationErrorConstants.OTP_REQUEST_REQUIRED);
-		}
+		}*//*
 
 		// At this point it should be active status alone.
 		// Increment the validation attempt count.
@@ -333,7 +332,7 @@ public class OTPManager {
 			otpEntity.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
 			otpRepo.save(otpEntity);
 			return false;
-		}
+		}*/
 	}
 	private void requireOtpNotFrozen(OtpTransaction otpEntity, boolean saveEntity) throws IdAuthenticationBusinessException {
 		if(otpEntity.getStatusCode().equals(IdAuthCommonConstants.FROZEN)) {
