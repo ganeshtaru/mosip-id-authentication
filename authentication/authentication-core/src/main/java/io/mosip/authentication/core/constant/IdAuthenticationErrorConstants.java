@@ -20,7 +20,8 @@ public enum IdAuthenticationErrorConstants {
 
 	// OTP
 	OTP_REQUEST_FLOODED("IDA-OTA-001", "Innumerous OTP requests received"),
-	OTP_GENERATION_FAILED("IDA-OTA-002", "Could not generate/send OTP"),
+	//OTP_GENERATION_FAILED("IDA-OTA-002", "Could not generate/send OTP"),
+	OTP_GENERATION_FAILED("IDA-OTA-002", "Could not generate otp/OTP is already sent, try again after sometime"),
 	EXPIRED_OTP("IDA-OTA-003", "OTP has expired", "Please regenerate OTP and try again after sometime"),
 	INVALID_OTP("IDA-OTA-004", "OTP is invalid", "Please provide correct OTP value"),
 	INVALID_TXN_ID("IDA-OTA-005", "Input transactionID does not match transactionID of OTP Request"),
