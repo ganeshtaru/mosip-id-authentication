@@ -91,7 +91,7 @@ public class OTPManager {
 	@Value("${mosip.ida.otp.frozen.duration.minutes:30}")
 	private int otpFrozenTimeMinutes;
 
-	private static final List<String> QUERIED_STATUS_CODES = List.of(IdAuthCommonConstants.ACTIVE_STATUS);
+	//private static final List<String> QUERIED_STATUS_CODES = List.of(IdAuthCommonConstants.ACTIVE_STATUS);
 
 	/** The logger. */
 	private static Logger logger = IdaLogger.getLogger(OTPManager.class);
@@ -286,10 +286,10 @@ public class OTPManager {
 		logger.info("individualId: {}", individualId);
 		String refIdHash = securityManager.hash(individualId);
 		logger.info("refIdHash: {}", refIdHash);
-		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(refIdHash, QUERIED_STATUS_CODES);
+		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByGeneratedDtimesDesc(refIdHash,IdAuthCommonConstants.ACTIVE_STATUS);
 		if (otpEntityOpt.isPresent()) {
 			OtpTransaction otpEntity = otpEntityOpt.get();
-			System.out.println("OtpTransaction: " + otpEntity); // Calls otpEntity.toString()
+			System.out.println("OtpTransaction: " + otpEntity);
 		} else {
 			System.out.println("No OtpTransaction found for refIdHash: " + refIdHash);
 		}
