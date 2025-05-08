@@ -286,7 +286,7 @@ public class OTPManager {
 		logger.info("individualId: {}", individualId);
 		String refIdHash = securityManager.hash(individualId);
 		logger.info("refIdHash: {}", refIdHash);
-		Optional<OtpTransaction> otpEntityOpt = otpRepo.findTopByRefIdAndStatusCodeOrderByGeneratedDtimesDesc(refIdHash,IdAuthCommonConstants.ACTIVE_STATUS);
+		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndGeneratedDtimesNotNullOrderByCrDtimesDesc(refIdHash,IdAuthCommonConstants.ACTIVE_STATUS);
 		if (otpEntityOpt.isPresent()) {
 			OtpTransaction otpEntity = otpEntityOpt.get();
 			System.out.println("OtpTransaction: " + otpEntity);
