@@ -262,7 +262,7 @@ public class OTPManager {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public boolean validateOtp(String pinValue, String otpKey, String individualId) throws IdAuthenticationBusinessException {
+/*	public boolean validateOtp(String pinValue, String otpKey, String individualId) throws IdAuthenticationBusinessException {
 		String otpHash;
 		otpHash = IdAuthSecurityManager.digestAsPlainText(
 				(otpKey + environment.getProperty(IdAuthConfigKeyConstants.KEY_SPLITTER) + pinValue).getBytes());
@@ -282,7 +282,7 @@ public class OTPManager {
 		} else {
 			return false;
 		}
-		/*logger.info("individualId: {}", individualId);
+		*//*logger.info("individualId: {}", individualId);
 		String refIdHash = securityManager.hash(individualId);
 		logger.info("refIdHash: {}", refIdHash);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndCrDtimesNotNullOrderByCrDtimesDesc(refIdHash,IdAuthCommonConstants.ACTIVE_STATUS);
@@ -299,9 +299,9 @@ public class OTPManager {
 		OtpTransaction otpEntity = otpEntityOpt.get();
 		//requireOtpNotFrozen(otpEntity, true);
 
-		*//*if(otpEntity.getStatusCode().equals(IdAuthCommonConstants.UNFROZEN)) {
+		*//**//*if(otpEntity.getStatusCode().equals(IdAuthCommonConstants.UNFROZEN)) {
 			throw new IdAuthenticationBusinessException(IdAuthenticationErrorConstants.OTP_REQUEST_REQUIRED);
-		}*//*
+		}*//**//*
 
 		// At this point it should be active status alone.
 		// Increment the validation attempt count.
@@ -332,8 +332,45 @@ public class OTPManager {
 			otpEntity.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
 			otpRepo.save(otpEntity);
 			return false;
-		}*/
+		}*//*
+	}*/
+
+	public boolean validateOtp(String pinValue, String otpKey, String individualId) throws IdAuthenticationBusinessException {
+		String otpHash = IdAuthSecurityManager.digestAsPlainText(
+				(otpKey + environment.getProperty(IdAuthConfigKeyConstants.KEY_SPLITTER) + pinValue).getBytes());
+
+		// Hash the individualId to use as the reference ID
+		String refIdHash = securityManager.hash(individualId);
+
+		// Fetch the latest OTP transaction based on hashed ref ID
+		Optional<OtpTransaction> otpEntityOpt = otpRepo.findFirstByRefIdAndStatusCodeInAndCrDtimesNotNullOrderByCrDtimesDesc(
+				refIdHash, IdAuthCommonConstants.ACTIVE_STATUS);
+
+		if (otpEntityOpt.isPresent()) {
+			OtpTransaction otpTxn = otpEntityOpt.get();
+
+			// Check if OTP is expired first
+			if (!otpTxn.getExpiryDtimes().isAfter(DateUtils.getUTCCurrentDateTime())) {
+				logger.error(IdAuthCommonConstants.SESSION_ID, this.getClass().getSimpleName(),
+						IdAuthenticationErrorConstants.EXPIRED_OTP.getErrorCode(), OTP_EXPIRED);
+				throw new IdAuthenticationBusinessException(IdAuthenticationErrorConstants.EXPIRED_OTP);
+			}
+
+			// Now validate the OTP hash
+			if (otpTxn.getOtpHash().equals(otpHash)) {
+				otpTxn.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
+				otpTxn.setStatusCode(IdAuthCommonConstants.USED_STATUS);
+				otpRepo.save(otpTxn);
+				return true;
+			} else {
+				return false;
+			}
+
+		} else {
+			return false;
+		}
 	}
+
 	private void requireOtpNotFrozen(OtpTransaction otpEntity, boolean saveEntity) throws IdAuthenticationBusinessException {
 		if(otpEntity.getStatusCode().equals(IdAuthCommonConstants.FROZEN)) {
 			if(!isAfterFrozenDuration(otpEntity)) {
