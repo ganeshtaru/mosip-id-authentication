@@ -109,7 +109,7 @@ public class OTPManager {
 	 */
 	public boolean sendOtp(OtpRequestDTO otpRequestDTO, String idvid, String idvidType, Map<String, String> valueMap)
 			throws IdAuthenticationBusinessException {
-		logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
+		/*logger.info("IndividualId: {}", otpRequestDTO.getIndividualId());
 		String refId = securityManager.hash(otpRequestDTO.getIndividualId());
 		logger.info("refId: {}", refId);
 		Optional<OtpTransaction> otpEntityOpt = otpRepo
@@ -122,7 +122,7 @@ public class OTPManager {
 				logger.info("Valid OTP already exists for individualId: {}", otpRequestDTO.getIndividualId());
 				return false;
 			}
-		}
+		}*/
 
 		Map<String, Object> otpTemplateValues = getOtpTemplateValues(otpRequestDTO, idvid, idvidType, valueMap);
 		String otp = generateOTP(otpRequestDTO.getIndividualId());
